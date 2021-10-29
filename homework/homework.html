@@ -1,15 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700&display=swap" rel="stylesheet">
   <title>Document</title>
+  <style>
+    *,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: url(./images/背景.jpg)no-repeat center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    button{
+      height: 40%;
+    }
+    .title{
+      height: 10vh;
+      text-align: center;
+      display: none;
+    }
+    #game {
+      /* background: red; */
+      width: 60vh;
+      height: 60vh;
+    }
+
+    .card {
+      width: 75px;
+      height: 125px;
+      position: relative;
+      /* 設定子元素在3D空間內 */
+      transform-style: preserve-3d;
+      float: left;
+      margin: 10px;
+      transition: transform 1s;
+      display: none;
+    }
+
+    .card-front {
+      width: 100%;
+      height: 100%;
+      background-image: url(./images/1-1.png);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: absolute;
+      /* 把花色翻轉到下面 */
+      transform: rotateY(180deg);
+    }
+
+    .card-back {
+      width: 100%;
+      height: 100%;
+      background-image: url(./images/生肖背面.png);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: absolute;
+      /* 隱藏另一面 */
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .card-open {
+      transform: rotateY(180deg);
+    }
+  </style>
 </head>
+
 <body>
+  <div class="title">
+    <h1>十二地支與生肖</h1>
+  </div>
+  <div id="game"></div>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="./jquery-3.6.0.min.js"></script>
   <script>
-    
+    // const array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+    Swal.fire({
+      title: '十二地支與生肖',
+      text:"十二生肖為鼠、牛、虎、兔、龍、蛇、馬、羊、猴、雞、狗、豬。它們依次與十二地支的子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥相配。形成子鼠、丑牛、寅虎、卯兔、辰龍、巳蛇、午馬、未羊、申猴、酉雞、戌狗、亥豬。華人常以農曆新年作新一年的生肖，及作其出生年的象徵動物為生肖，循環一次為一輪。",
+      width: 650,
+      padding: '3em',
+      background: '#fff url(./images/alert.png)no-repeat center',
+      backdrop: `
+    rgba(0,0,123,0.4)
+    url(./images/alert_tiger.png)
+    left bottom
+    no-repeat
+  `
+    }).then((result) => {
+      $('.card').css({
+        display: 'block'
+      })
+      $('.title').css({
+        display: 'block'
+      })
+    })
+
+    //產生24張卡片
+    for (let i = 0; i < 24; i++) {
+      $('#game').append(`
+      <div class="card">
+        <div class="card-front"></div>
+    <div class="card-back"></div>
+  </div>
+  `)
+    }
+
+    //決定數字並打散
+    for (let i = 0; i < 24; i++) {
+      //決定數字
+      const num = i % 12 + 1
+      if (i <= 11) {
+        $('.card').eq(i).find('.card-front').css('background-image', `url(./images/${num}-1.png)`)
+        $('.card').eq(i).attr('data-card', num)
+      } else {
+        $('.card').eq(i).find('.card-front').css('background-image', `url(./images/${num}-2.png)`)
+        $('.card').eq(i).attr('data-card', num)
+      }
+
+      //打散
+      const target = Math.round(Math.random() * 15)
+      $('.card').eq(target).insertAfter($('.card').eq(i))
+    }
+
+    //翻牌
+    $('#game').on('click', '.card', function () {
+      //最多只能翻兩張牌，且這張牌還沒翻開
+      if ($('.card-open').length < 2 && !$(this).hasClass('card-open')) {
+        $(this).addClass('card-open')
+      }
+      //如果翻開兩張了
+      if ($('.card-open').length == 2) {
+        //如果兩張數字一樣
+        if ($('.card-open').eq(0).attr('data-card') == $('.card-open').eq(1).attr('data-card')) {
+          //使用'card-ok'標記已完成淡出
+          $('.card-open').addClass('card-ok')
+          //將.card-front淡出而不是.card，因為對card淡出會把3d壓平
+          $('.card-open .card-front').fadeTo(1000, 0)
+        }
+        //不管一不一樣都翻回來
+        setTimeout(() => {
+          //如果.card-open裡的.card-front透明度不是1 把.card-open透明度設為0
+          //.each()類似for of裡面的 $(this)代表迴圈在跑的元素
+          $('.card-open').each(function () {
+            if ($(this).find('.card-front').css('opacity') != 1) {
+              $(this).css('opacity', 0)
+            }
+          })
+          $('.card-open').removeClass('card-open')
+          if ($('.card-ok').length == 16) {
+            Swal.fire({
+              title: '恭喜過關'
+            })
+          }
+        }, 1000)
+      }
+    }
+    )
   </script>
 </body>
+
 </html>
