@@ -116,8 +116,8 @@
 
     for (let i = 0; i < 24; i++) {
       $('#game').append(`
-      <div class="card">
-        <div class="card-front"></div>
+    <div class="card">
+    <div class="card-front"></div>
     <div class="card-back"></div>
   </div>
   `)
@@ -147,16 +147,16 @@
             setTimeout(function(){
               let aa=$('.card-open').attr('data-card')
               Swal.fire({
-      width: 650,
-      padding: '3em',
-      background: `url(./images/alert-${aa}.jpg)no-repeat center/cover`,
-      backdrop: `
-    rgba(0,0,123,0.4)
-    url(./images/alert_tiger.png)
-    left bottom
-    no-repeat
-  `
-    })
+              width: 650,
+              padding: '3em',
+              background: `url(./images/alert-${aa}.jpg)no-repeat center/cover`,
+              backdrop: `
+              rgba(0,0,123,0.4)
+              url(./images/alert_tiger.png)
+              left bottom
+              no-repeat
+              `
+              })
             },800);
         }
 
