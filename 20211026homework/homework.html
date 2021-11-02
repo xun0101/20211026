@@ -13,7 +13,9 @@
       height: 100%;
     }
 
-    body {
+    #bac {
+      height: 100vh;
+      width: 100vw;
       margin: 0;
       padding: 0;
       background: url(./images/背景.jpg)no-repeat center/cover;
@@ -77,24 +79,27 @@
     .card-open {
       transform: rotateY(180deg);
     }
-    .swal2-styled.swal2-confirm{
+    .btn{
       display: flex;
       align-self: flex-end;
       height: 20%;
     }
+
   </style>
 </head>
 
 <body>
+  <div id="bac">
   <div class="title">
     <h1>十二地支與生肖</h1>
   </div>
   <div id="game"></div>
+</div>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="./jquery-3.6.0.min.js"></script>
   <script>
     const audio = new Audio()
-    // const array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+
     Swal.fire({
       width: 650,
       padding: '3em',
@@ -104,7 +109,10 @@
     url(./images/alert_tiger.png)
     left bottom
     no-repeat
-  `
+  `,
+    customClass:{
+    confirmButton: 'btn',
+      }
     }).then((result) => {
       $('.card').css({
         display: 'block'
@@ -155,9 +163,13 @@
               url(./images/alert_tiger.png)
               left bottom
               no-repeat
-              `
+              `,
+              customClass:{
+              confirmButton: 'btn',
+            }
               })
-            },800);
+            },800)
+          $("h1").text("答對了!").css('color','blue')
         }
 
         setTimeout(() => {
@@ -167,15 +179,17 @@
             }
           })
           $('.card-open').removeClass('card-open')
+          $("h1").text("十二地支與生肖").css('color','black')
           if ($('.card-ok').length == 24) {
             Swal.fire({
               title: '恭喜過關',
               imageUrl:'./images/alert_tiger.png',
             })
+            $("h1").text("你好棒!").css('color','red')
             audio.src='./rihai.mp3'
             audio.play()
           }
-        }, 1200)
+        }, 1500)
       }
     }
     )
