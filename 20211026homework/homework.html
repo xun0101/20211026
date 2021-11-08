@@ -154,6 +154,8 @@
           $('.card-open .card-front').fadeTo(1000, 0)
             setTimeout(function(){
               let aa=$('.card-open').attr('data-card')
+              audio.src=`./video/video${aa}.mp3`
+              audio.play()
               Swal.fire({
               width: 650,
               padding: '3em',
